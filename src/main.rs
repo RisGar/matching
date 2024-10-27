@@ -13,32 +13,23 @@ type StudentPref = Vec<(Course, Priority)>;
 type Preferences = BTreeMap<StudentId, StudentPref>;
 type Matchings = BTreeMap<String, Vec<(StudentId, Priority)>>;
 
-// fn courses()-> Vec<Course> {
-//     vec![
-//         ("Mo_08_1".to_string(), 35),
-//         ("Mo_10_1".to_string(), 35),
-//         ("Mo_10_2".to_string(), 35),
-//         ("Mo_10_3".to_string(), 45),
-//         ("Mo_10_4".to_string(), 35),
-//         ("Mo_10_5".to_string(), 35),
-//         ("Mo_12_1".to_string(), 35),
-//         ("Mo_12_2".to_string(), 45),
-//         ("Mo_12_3".to_string(), 35),
-//         ("Mo_14_1".to_string(), 35),
-//         ("Mo_12_2".to_string(), 45),
-//         ("Mo_12_3".to_string(), 35),
-//         ("Mo_12_4".to_string(), 35),
-//         ("Mo_12_5".to_string(), 35),
-//     ]
-// }
-
 /// Available courses and their capacity
 fn courses() -> BTreeMap<Course, Capacity> {
   BTreeMap::from([
-    ("A".to_string(), 2),
-    ("B".to_string(), 2),
-    ("C".to_string(), 3),
-    ("D".to_string(), 1),
+    ("Mo_08_1".to_string(), 35),
+    ("Mo_10_1".to_string(), 35),
+    ("Mo_10_2".to_string(), 35),
+    ("Mo_10_3".to_string(), 45),
+    ("Mo_10_4".to_string(), 35),
+    ("Mo_10_5".to_string(), 35),
+    ("Mo_12_1".to_string(), 35),
+    ("Mo_12_2".to_string(), 45),
+    ("Mo_12_3".to_string(), 35),
+    ("Mo_14_1".to_string(), 35),
+    ("Mo_12_2".to_string(), 45),
+    ("Mo_12_3".to_string(), 35),
+    ("Mo_12_4".to_string(), 35),
+    ("Mo_12_5".to_string(), 35),
   ])
 }
 
@@ -67,6 +58,7 @@ fn generate_student() -> StudentPref {
   pref
 }
 
+/// Genrate batch of students with preferences
 fn generate_students(preferences: &mut Preferences) {
   (1..courses().values().map(|&n| n as StudentId).sum()).for_each(|id| {
     let student = generate_student();
@@ -74,6 +66,7 @@ fn generate_students(preferences: &mut Preferences) {
   });
 }
 
+/// Gale-Shapley algorithm
 fn proposing(preferences: &mut Preferences, matchings: &mut Matchings) -> Vec<StudentId> {
   let backup_preferences = preferences.clone();
 
@@ -135,46 +128,15 @@ fn main() {
 
   generate_students(&mut preferences);
 
-  println!("{:#?}", preferences);
+  let unmatched = proposing(&mut preferences, &mut matchings);
 
-  proposing(&mut preferences, &mut matchings);
+  matchings.iter().for_each(|(course, students)| {
+    println!(
+      "{}: {:?}",
+      course,
+      students.iter().map(|(id, _)| id).collect::<Vec<_>>()
+    );
+  });
 
-  println!("{:#?}", matchings);
+  println!("Unmatched students: {:?} ({})", unmatched, unmatched.len());
 }
-
-// e
-
-// type Preferences = [(Course, Prio)]
-
-// type Id = Int
-
-// data Prio = Neg2 | Neg1 | Zero | One | Two
-
-// type Course = (String, Quota)
-
-// type Quota = Int
-
-// countQuota :: [Course] -> Quota
-// countQuota = sum . map snd
-
-// randomStudents :: Quota -> [Student]
-// randomStudents maxCourses =
-//   randomStudents' 1
-//   where
-//     -- studentId <- randomRIO (1, 1000)
-//     -- numPreferences <- randomRIO (1, maxCourses)
-//     -- preferences <- replicateM numPreferences generateRandomPreference
-//     -- return (studentId, preferences)
-
-//     randomStudents' id acc = null
-
-// randomStudent :: Int -> Student
-// randomStudent id = (id, [])
-//   where prefs =
-
-// students :: Student -> [Student]
-// students me = me : [(0, [])]
-
-// main :: IO ()
-// main = do
-//   print $ countQuota courses
